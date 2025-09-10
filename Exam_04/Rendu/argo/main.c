@@ -6,7 +6,7 @@
 /*   By: abnsila <abnsila@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/09 15:58:33 by abnsila           #+#    #+#             */
-/*   Updated: 2025/09/10 17:43:03 by abnsila          ###   ########.fr       */
+/*   Updated: 2025/09/10 18:05:19 by abnsila          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ int	main(int argc, char **argv)
 	if (argo (&file, stream) != 1)
 	{
 		free_json(file);
+		fclose(stream);
 		return 1;
 	}
 	serialize(file);

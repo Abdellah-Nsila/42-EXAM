@@ -6,7 +6,7 @@
 /*   By: abnsila <abnsila@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 18:48:20 by abnsila           #+#    #+#             */
-/*   Updated: 2025/09/10 17:56:33 by abnsila          ###   ########.fr       */
+/*   Updated: 2025/09/10 18:19:48 by abnsila          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ int	parse_integer(json *dst, FILE *stream)
 		else
 			break ;
 	}
+	//! Restore last char (for token check in parsing)
 	ungetc(c, stream);
 	dst->type = INTEGER;
 	dst->integer = n * sign;
@@ -86,11 +87,13 @@ char	*parse_string(FILE *stream)
 	if (!s)
 		return (NULL);
 	s[0] = '\0';
+	//! Stop at EOF or closed quote ""
 	while (peek(stream) != EOF && peek(stream) != '\"')
 	{
 		c = getc(stream);
 		if (c == '\\' && peek(stream) == '\"')
 			c = getc(stream);
+		//! Realloc (previous_size + new char + \0)
 		tmp = realloc(s, (i + 2) * sizeof(char));
 		if (!tmp)
 		{
@@ -102,7 +105,7 @@ char	*parse_string(FILE *stream)
 		s[i] = '\0';
 	}
 	s[i] = '\0';
-	// Consume second "
+	//! Consume second "
 	if (expect(stream, '\"'))
 	{	
 		return (s);
@@ -118,28 +121,39 @@ int	parse_map(json *dst, FILE *stream)
 	dst->type = MAP;
 	dst->map.size = 0;
 	dst->map.data = NULL;
+	//! Empty Map
+	if (accept(stream, '}'))
+		return (1);
+	//! Stop at EOF or closed {}
 	while (peek(stream) != EOF && peek(stream) != '}')
 	{
+		//! Check for next pair only after first time ( the -> , come after (: )
 		if (dst->map.size > 0)
 			if (expect(stream, ',') == 0)
 				return (-1);
+		//! Begin of key string
 		if (expect(stream, '\"') == 0)
 			return (-1);
-		// " already consumed by expect()
+		//! " already consumed by expect(), start parsed
 		key = parse_string(stream);
 		if (key == NULL)
 			return (-1);
+		//! Time to value so we consume the -> :
 		if (expect(stream, ':') == 0)
 			return (-1);
+		//! realloc for next pair the size is (previouse_size + 1)
 		tmp = realloc(dst->map.data, (dst->map.size + 1) * sizeof(pair));
 		dst->map.data = tmp;
 		dst->map.data[dst->map.size].key = key;
+		//! Recusive the value by parsing -> json type (:
 		if (parsing(&(dst->map.data[dst->map.size].value), stream) == -1)
+		{
+			free(key);
 			return (-1);
+		}
 		dst->map.size++;
 	}
-	// Consume second }
-	//TODO: I need to be sure about freeing this later
+	//! Consume second }
 	if (expect(stream, '}'))
 		return (1);
 	return (-1);
@@ -150,14 +164,17 @@ int	parsing(json *dst, FILE *stream)
 	int		c;
 	char	*s;
 
+	//! Uneceptable tokens at first
 	c = peek(stream);
 	if (c == EOF || c == '}' || c == ',' || c == ':')
 	{
 		unexpected(stream);
 		return (-1);
 	}
+	//! Stop at EOF and end of Map because this parsing function is used as recursion for map (:
 	while ((c = peek(stream)) != EOF && (c = peek(stream)) != '}')
 	{
+		//! String
 		if (c == '\"')
 		{
 			// Consume first "
@@ -168,6 +185,7 @@ int	parsing(json *dst, FILE *stream)
 			dst->type = STRING;
 			dst->string = s;
 		}
+		//! Map
 		else if (c == '{')
 		{
 			// Consume first {
@@ -175,24 +193,27 @@ int	parsing(json *dst, FILE *stream)
 			if (parse_map(dst, stream) == -1)
 				return (-1);
 		}
+		//! Integer
 		else if (isdigit(c) || c == '-' || c == '+')
 		{
 			if (parse_integer(dst, stream) == -1)
 				return (-1);
 		}
+		//! Next Map pair
 		else if (c == ',')
 			return (1);
+		//! Unexpected tokens
 		else
 		{
 			unexpected(stream);
 			return (-1);
 		}
 	}
+	//! Success parsing
 	return (1);
 }
 
 int	argo(json *dst, FILE *stream)
 {
-	// printf("exit code: %d\n", parsing(dst, stream));
 	return(parsing(dst, stream));
 }
