@@ -342,6 +342,7 @@ int main() {
     run_test("Escaped string", test_escaped_string);
     
     printf("\n🗂️  MAP TESTS:\n");
+    run_test("Empty map", test_empty_map);
     run_test("Simple map", test_simple_map);
     run_test("Multiple entries map", test_multiple_map);
     run_test("Nested map", test_nested_map);

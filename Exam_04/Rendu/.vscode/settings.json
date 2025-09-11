@@ -10,6 +10,8 @@
         "utility": "c",
         "variant": "c",
         "random": "c",
-        "argo.h": "c"
+        "argo.h": "c",
+        "signal.h": "c",
+        "stdbool.h": "c"
     }
 }

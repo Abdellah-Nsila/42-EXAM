@@ -6,7 +6,7 @@
 /*   By: abnsila <abnsila@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 16:34:52 by abnsila           #+#    #+#             */
-/*   Updated: 2025/09/08 18:46:56 by abnsila          ###   ########.fr       */
+/*   Updated: 2025/09/11 19:26:03 by abnsila          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@ int ft_popen(const char *file, char *const argv[], char type)
 	int	pipefd[2];
 	int	pid;
 
+	if (!file || !argv)
+		return (-1);
 	// Setup Pipe
 	if (pipe(pipefd) != 0)
 		return (-1);
@@ -76,30 +78,30 @@ int ft_popen(const char *file, char *const argv[], char type)
 	return (-1);
 }
 
-#include <stdio.h>
-int main() {
-    FILE *fp;
-    char buffer[128];
+// #include <stdio.h>
+// int main() {
+//     FILE *fp;
+//     char buffer[128];
 
-    // Open the 'ls -l' command for reading its output
-    fp = popen("ls -l", "r");
-    if (fp == NULL) {
-        perror("popen failed");
-        exit(EXIT_FAILURE);
-    }
+//     // Open the 'ls -l' command for reading its output
+//     fp = popen("ls -l", "r");
+//     if (fp == NULL) {
+//         perror("popen failed");
+//         exit(EXIT_FAILURE);
+//     }
 
-    // Read and print the output line by line
-    while (fgets(buffer, sizeof(buffer), fp) != NULL) {
-        printf("%s", buffer);
-    }
+//     // Read and print the output line by line
+//     while (fgets(buffer, sizeof(buffer), fp) != NULL) {
+//         printf("%s", buffer);
+//     }
 
-    // Close the pipe and get the command's exit status
-    int status = pclose(fp);
-    if (status == -1) {
-        perror("pclose failed");
-    } else {
-        printf("Command exited with status %d\n", WEXITSTATUS(status));
-    }
+//     // Close the pipe and get the command's exit status
+//     int status = pclose(fp);
+//     if (status == -1) {
+//         perror("pclose failed");
+//     } else {
+//         printf("Command exited with status %d\n", WEXITSTATUS(status));
+//     }
 
-    return 0;
-}
+//     return 0;
+// }

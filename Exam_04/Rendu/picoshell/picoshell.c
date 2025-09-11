@@ -6,7 +6,7 @@
 /*   By: abnsila <abnsila@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 14:11:52 by abnsila           #+#    #+#             */
-/*   Updated: 2025/09/08 16:31:48 by abnsila          ###   ########.fr       */
+/*   Updated: 2025/09/11 19:16:12 by abnsila          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,8 @@ int	picoshell(char **cmds[])
 	int	pid;
 	int	status;
 
+	if (!cmds || !*cmds)
+		return (EXIT_FAILURE);
 	i = 0;
 	count = count_stages(cmds);
 	while (i < count)
@@ -134,36 +136,36 @@ int	picoshell(char **cmds[])
 }
 
 
-#include <stdio.h>
-int	main(int argc, char **argv)
-{
-	int	cmds_size = 1;
-	for (int i = 1; i < argc; i++)
-	{
-		if (!strcmp(argv[i], "|"))
-			cmds_size++;
-	}
-	char ***cmds = calloc(cmds_size + 1, sizeof(char **));
-	if (!cmds)
-	{
-		dprintf(2, "Malloc error: %m\n");
-		return 1;
-	}
-	cmds[cmds_size] = NULL; //need confirmation for this line
-	cmds[0] = argv + 1;
-	int cmds_i = 1;
-	for (int i = 1; i < argc; i++)
-	{
-		if (!strcmp(argv[i], "|"))
-		{
-			cmds[cmds_i] = argv + i + 1;
-			argv[i] = NULL;
-			cmds_i++;
-		}
-	}
-	int ret = picoshell(cmds);
-	if (ret)
-		perror("picoshell");
-	free(cmds);
-	return ret;
-}
+// #include <stdio.h>
+// int	main(int argc, char **argv)
+// {
+// 	int	cmds_size = 1;
+// 	for (int i = 1; i < argc; i++)
+// 	{
+// 		if (!strcmp(argv[i], "|"))
+// 			cmds_size++;
+// 	}
+// 	char ***cmds = calloc(cmds_size + 1, sizeof(char **));
+// 	if (!cmds)
+// 	{
+// 		dprintf(2, "Malloc error: %m\n");
+// 		return 1;
+// 	}
+// 	cmds[cmds_size] = NULL; //need confirmation for this line
+// 	cmds[0] = argv + 1;
+// 	int cmds_i = 1;
+// 	for (int i = 1; i < argc; i++)
+// 	{
+// 		if (!strcmp(argv[i], "|"))
+// 		{
+// 			cmds[cmds_i] = argv + i + 1;
+// 			argv[i] = NULL;
+// 			cmds_i++;
+// 		}
+// 	}
+// 	int ret = picoshell(cmds);
+// 	if (ret)
+// 		perror("picoshell");
+// 	free(cmds);
+// 	return ret;
+// }
