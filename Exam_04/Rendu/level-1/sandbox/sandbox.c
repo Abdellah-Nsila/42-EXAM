@@ -1,11 +1,8 @@
-
-#include <stdarg.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/wait.h>
-#include <fcntl.h>
 #include <stdbool.h>
 #include <signal.h>
 #include <bits/sigaction.h>
@@ -42,7 +39,6 @@ int	signal_notif(pid_t pid, int *status, bool verbose, unsigned int timeout)
 	{
 		if (errno == EINTR)
 		{
-			// TODO: Check for zombie process
 			kill(pid, SIGKILL);
 			waitpid(pid, NULL, 0);
 			if (verbose)
@@ -79,13 +75,11 @@ int	signal_notif(pid_t pid, int *status, bool verbose, unsigned int timeout)
 
 void	child(void (*f)(void))
 {
-	//TODO: Find a way to catch the SIGALARM signal in parent ?
 	f();
 }
 
 int	sandbox(void (*f)(void), unsigned int timeout, bool verbose)
 {
-	(void)timeout;
 	pid_t	pid;
 	int		status;
 

@@ -1,52 +1,68 @@
 
 # include "vbc.h"
 
+node    *new_node(node n)
+{
+	node *ret = calloc(1, sizeof(n));
+	if (!ret)
+		return (NULL);
+	*ret = n;
+	return (ret);
+}
 
+void    destroy_tree(node *n)
+{
+	if (!n)
+		return ;
+	if (n->type != VAL)
+	{
+		destroy_tree(n->l);
+		destroy_tree(n->r);
+	}
+	free(n);
+}
 
-// node	*get_expr_node(char *s, node *ret)
-// {
-// 	node	*n;
+void    unexpected(char c)
+{
+	if (c)
+		printf("Unexpected token '%c'\n", c);
+	else
+		printf("Unexpected end of file\n");
+}
 
-// 	if (!ret)
-// 			return (NULL);
-// 	n = NULL;
-// 	n = calloc(1, sizeof(node));
-// 	if (!n)
-// 		return (NULL);
-// 	if (*s == '(')
-// 	{
-// 		n = get_expr_node(*s + 1, ret);
-// 		if (expect(&s, ')'))
-// 			exit(EXIT_SUCCESS);
-// 		if (!n)
-// 			return (NULL);
-// 		return (n);
-// 	}
-// 	else if (*s == '+')
-// 	{
-// 		n->type = ADD;
-// 		n->l = get_expr_node(*s - 1, ret);
-// 		if (!n->l)
-// 			return (NULL);
-// 		n->r = get_expr_node(*s + 1, ret);
-// 		if (!n->r)
-// 			return (free(n->l), NULL);
-// 		return (n);
-// 	}
-// 	else if (isdigit(*s))
-// 	{
-// 		n->type = VAL;
-// 		n->val = *s - '0';
-// 		n->l = NULL;
-// 		n->r = NULL;
-// 		if (!n->l)
-// 			return (NULL);
-// 		return (n);
-// 	}
-// 	ret->l = get_expr_node(*s + 1, ret);
-// }
+int accept(char **s, char c)
+{
+	if (**s == c)
+	{
+		(*s)++;
+		return (1);
+	}
+	return (0);
+}
 
-node *parse_value(char **s)
+int expect(char **s, char c)
+{
+	if (accept(s, c))
+		return (1);
+	unexpected(**s);
+	return (0);
+}
+
+int eval_tree(node *tree)
+{
+	switch (tree->type)
+	{
+		case ADD:
+			return (eval_tree(tree->l) + eval_tree(tree->r));
+		case MULTI:
+			return (eval_tree(tree->l) * eval_tree(tree->r));
+		case VAL:
+			return (tree->val);
+	}
+	return (0);
+}
+
+node	*parse_value(char **s)
 {
 	node	*n;
 
@@ -56,6 +72,7 @@ node *parse_value(char **s)
 		n = parse_add(s);
 		if (expect(s, ')'))
 			return (n);
+		destroy_tree(n);
 		return (NULL);
 	}
 	else if (isdigit(**s))
@@ -71,11 +88,11 @@ node *parse_value(char **s)
 	return (NULL);
 }
 
-node *parse_multi(char **s)
+node	*parse_multi(char **s)
 {
+	node	*root;
 	node	*n;
 	node	*right;
-	node	*root;
 
 	n = parse_value(s);
 	while (**s == '*')
@@ -83,7 +100,6 @@ node *parse_multi(char **s)
 		(*s)++;
 		right = parse_value(s);
 		root = calloc(1, sizeof(node));
-
 		root->type = MULTI;
 		root->l = n;
 		root->r = right;
@@ -92,20 +108,18 @@ node *parse_multi(char **s)
 	return (n);
 }
 
-node *parse_add(char **s)
+node	*parse_add(char **s)
 {
+	node	*root;
 	node	*n;
 	node	*right;
-	node	*root;
 
 	n = parse_multi(s);
-	
 	while (**s == '+')
 	{
 		(*s)++;
 		right = parse_multi(s);
 		root = calloc(1, sizeof(node));
-
 		root->type = ADD;
 		root->l = n;
 		root->r = right;
@@ -114,14 +128,14 @@ node *parse_add(char **s)
 	return (n);
 }
 
-
 node	*parse_expr(char *s)
 {
 	node *ret;
 
 	ret = parse_add(&s);
 	if (!ret)
-			return (NULL);
+		return (NULL);
+	expect(&s, EOF);
 	if (*s) 
 	{
 		destroy_tree(ret);

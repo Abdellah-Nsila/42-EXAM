@@ -28,6 +28,7 @@ void	destroy_tree(node *n);
 void	unexpected(char c);
 int		accept(char **s, char c);
 int		expect(char **s, char c);
+int     eval_tree(node *tree);
 node	*parse_expr(char *s);
 
 #endif

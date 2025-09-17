@@ -6,7 +6,7 @@
 /*   By: abnsila <abnsila@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 18:48:20 by abnsila           #+#    #+#             */
-/*   Updated: 2025/09/10 18:19:48 by abnsila          ###   ########.fr       */
+/*   Updated: 2025/09/17 10:56:24 by abnsila          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,7 +145,7 @@ int	parse_map(json *dst, FILE *stream)
 		tmp = realloc(dst->map.data, (dst->map.size + 1) * sizeof(pair));
 		dst->map.data = tmp;
 		dst->map.data[dst->map.size].key = key;
-		//! Recusive the value by parsing -> json type (:
+		//! Recursive the value by parsing -> json type (:
 		if (parsing(&(dst->map.data[dst->map.size].value), stream) == -1)
 		{
 			free(key);

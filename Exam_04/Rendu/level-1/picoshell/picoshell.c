@@ -6,7 +6,7 @@
 /*   By: abnsila <abnsila@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 14:11:52 by abnsila           #+#    #+#             */
-/*   Updated: 2025/09/11 19:16:12 by abnsila          ###   ########.fr       */
+/*   Updated: 2025/09/17 10:01:48 by abnsila          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,7 @@ int	picoshell(char **cmds[])
 		close_pipes_in_parent(&pipefd, i);
 		i++;
 	}
+
 	while (wait(&status) > 0)
 	{
 		if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
