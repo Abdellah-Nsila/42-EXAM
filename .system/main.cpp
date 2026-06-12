@@ -103,7 +103,7 @@ void exam::exam_prompt(void)
         }
         else if (input == "force_success")
         {
-            if (!vip)
+            if (vip)
             {
                 std::cout << "'force_success' is a Grademe+ command, contribute by making a Pull Request or support with command 'sponsor'" << std::endl;
             }
