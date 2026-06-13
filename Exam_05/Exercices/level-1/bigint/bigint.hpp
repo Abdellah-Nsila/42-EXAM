@@ -6,7 +6,7 @@
 /*   By: abnsila <abnsila@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/11 15:33:08 by abnsila           #+#    #+#             */
-/*   Updated: 2026/06/12 20:23:42 by abnsila          ###   ########.fr       */
+/*   Updated: 2026/06/13 18:09:18 by abnsila          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,24 @@ class bigint
 		bigint& operator=(const bigint& copy);
 		~bigint();
 
+		// + +=
 		bigint&	operator+=(const bigint& toAdd);
 		bigint	operator+(const bigint& toAdd) const;
 
+		// ++? ?++
 		bigint&	operator++();
 		bigint	operator++(int);
 
+		bigint&	operator<<=(unsigned int n);
+		bigint	operator<<(unsigned int n) const;
+		bigint&	operator>>=(unsigned int n);
+		bigint	operator>>(unsigned int n) const;
+
+		bigint&	operator<<=(const bigint& toShift);
+		bigint	operator<<(const bigint& toShift) const;
+		bigint&	operator>>=(const bigint& toShift);
+		bigint	operator>>(const bigint& toShift) const;
+		
 		bool	operator<(const bigint& toComp) const;
 		bool	operator>(const bigint& toComp) const;
 		bool	operator==(const bigint& toComp) const;
@@ -42,7 +54,7 @@ class bigint
 		bool	operator>=(const bigint& toComp) const;
 
 		const std::string&	getDigits() const;
-		const std::string	toStr() const;
+		std::string	toStr() const;
 };
 
 std::ostream&	operator<<(std::ostream& cout, const bigint& other);
