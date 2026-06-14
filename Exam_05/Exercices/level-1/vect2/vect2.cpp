@@ -28,13 +28,20 @@ vect2::~vect2()
 {
 }
 
-int	vect2::operator[](int index) const
+int&	vect2::operator[](int index)
 {
 	if (index == 0)
 		return (this->_x);
-	if (index == 1)
+	else
 		return (this->_y);
-	return (0);
+}
+
+const int&	vect2::operator[](int index) const
+{
+	if (index == 0)
+		return (this->_x);
+	else
+		return (this->_y);
 }
 
 vect2&	vect2::operator++()
@@ -78,13 +85,6 @@ vect2&	vect2::operator-=(const vect2& toSub)
 	return (*this);
 }
 
-vect2&	vect2::operator*=(const vect2& toMul)
-{
-	this->_x = this->_x * toMul.GetX();
-	this->_y = this->_y * toMul.GetY();
-	return (*this);
-}
-
 vect2	vect2::operator+(const vect2& toAdd) const
 {
 	vect2	v(*this);
@@ -99,18 +99,23 @@ vect2	vect2::operator-(const vect2& toSub) const
 	return (v);
 }
 
-vect2	vect2::operator*(const vect2& toMul) const
-{
-	vect2	v(*this);
-	v *= toMul;
-	return (v);
-}
-
 vect2	vect2::operator*=(int n)
 {
 	this->_x = this->_x * n;
 	this->_y = this->_y * n;
 	return (*this);
+}
+
+bool	vect2::operator==(const vect2& toComp) const
+{
+	return (this->_x == toComp.GetX()
+		&& this->_y == toComp.GetY());
+}
+
+bool	vect2::operator!=(const vect2& toComp) const
+{
+	return (this->_x != toComp.GetX()
+		|| this->_y != toComp.GetY());
 }
 
 int	vect2::GetX() const
@@ -133,14 +138,6 @@ void	vect2::SetY(int y)
 	this->_y = y;
 }
 
-std::ostream&	operator<<(std::ostream& cout, const vect2& v)
-{
-	cout << "{" << v[0] << ", " << v[1] << "}";
-	return (cout);
-}
-
-
-
 vect2			operator*(const vect2& v, int n)
 {
 	vect2	obj(v);
@@ -152,4 +149,15 @@ vect2			operator*(const vect2& v, int n)
 vect2	operator*(int n, const vect2& v)
 {
 	return (v * n);
+}
+
+vect2			operator-(const vect2& v)
+{
+	return (v * -1);
+}
+
+std::ostream&	operator<<(std::ostream& cout, const vect2& v)
+{
+	cout << "{" << v[0] << ", " << v[1] << "}";
+	return (cout);
 }
