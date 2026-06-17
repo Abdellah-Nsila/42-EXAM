@@ -47,6 +47,7 @@ int main(int argc, char **argv) {
     sa.insert(raw_items, 4);
     std::cout << std::endl;
 
+    // TODO: Fix memory leaks
     delete t; // Frees the searchable_tree_bag instance
     delete a;
   }
