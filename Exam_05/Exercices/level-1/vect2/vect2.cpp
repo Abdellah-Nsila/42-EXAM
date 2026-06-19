@@ -85,6 +85,13 @@ vect2&	vect2::operator-=(const vect2& toSub)
 	return (*this);
 }
 
+vect2&		vect2::operator-()
+{
+	this->_x = this->_x * -1;
+	this->_y = this->_y * -1;
+	return (*this);
+}
+
 vect2	vect2::operator+(const vect2& toAdd) const
 {
 	vect2	v(*this);
@@ -99,7 +106,21 @@ vect2	vect2::operator-(const vect2& toSub) const
 	return (v);
 }
 
-vect2	vect2::operator*=(int n)
+vect2	vect2::operator*(int n) const
+{
+	vect2	obj(*this);
+	obj *= 2;
+	return (obj);
+}
+
+vect2&	vect2::operator*=(const vect2& toMul)
+{
+	this->_x = this->_x * toSub.GetX();
+	this->_y = this->_y * toSub.GetY();
+	return (*this);
+}
+
+vect2&	vect2::operator*=(int n)
 {
 	this->_x = this->_x * n;
 	this->_y = this->_y * n;
@@ -149,11 +170,6 @@ vect2			operator*(const vect2& v, int n)
 vect2	operator*(int n, const vect2& v)
 {
 	return (v * n);
-}
-
-vect2			operator-(const vect2& v)
-{
-	return (v * -1);
 }
 
 std::ostream&	operator<<(std::ostream& cout, const vect2& v)
