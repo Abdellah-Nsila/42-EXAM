@@ -23,6 +23,12 @@ int	parse_header(t_header* header, char* line)
 	if (*line >= 32 && *line <= 126) //is printable full_char
 		header->full_char = *line++;
 
+	// if any char is duplicate
+	if (header->empty_char == header->obstacle_char 
+		|| header->empty_char == header->full_char
+		|| header->obstacle_char == header->full_char)
+		return (1);
+
 	// return 0 => '\0' if parsing completed correctly, else something is wrong
 	return (*line);
 }
@@ -37,15 +43,18 @@ void	free_bsq_arr(t_map* map)
 {
 	int row = 0;
 
-	if (!map || !(map->arr))
+	if (!map || !(map->map_arr) || !(map->cache_arr))
 		return;
 	while (row < map->height)
 	{
-		if (map->arr[row])
-				free(map->arr[row]);
+		if (map->map_arr[row])
+			free(map->map_arr[row]);
+		if (map->cache_arr[row])
+			free(map->cache_arr[row]);
 		row++;
 	}
-	free(map->arr);
+	free(map->map_arr);
+	free(map->cache_arr);
 }
 
 int	parse_lines(t_map* map, char* line)
@@ -54,27 +63,35 @@ int	parse_lines(t_map* map, char* line)
 
 	if (map->height + 1 > map->header.lines_num)
 		return (0);
-	int *row = (int*)malloc(map->width * sizeof(int));
-	if (!row)
+	char*	map_row = (char*)malloc(map->width * sizeof(char));
+	if (!map_row)
 		return (1);
+	int*	cache_row = (int*)malloc(map->width * sizeof(int));
+	if (!cache_row)
+		return (1);
+
 	while (line[i])
 	{
 		if (line[i] == map->header.empty_char)
 		{
-			row[i] = 1;
+			map_row[i] = map->header.empty_char;
+			cache_row[i] = 1;
 		}
 		else if (line[i] == map->header.obstacle_char)
 		{
-			row[i] = 0;
+			map_row[i] = map->header.obstacle_char;
+			cache_row[i] = 0;
 		}
 		else
 		{
-			free(row);
+			free(map_row);
+			free(cache_row);
 			return (1);
 		}
 		i++;
 	}
-	map->arr[map->height] = row;
+	map->map_arr[map->height] = map_row;
+	map->cache_arr[map->height] = cache_row;
 	map->height += 1;
 	return (0);
 }
@@ -86,10 +103,6 @@ int	read_from_file(t_map* map, FILE* file)
 	ssize_t	bytes_read;
 	int		header_done = 0;
 	int		current_line_len = 0;
-
-	map->width = -1;
-	map->height = 0;
-	map->arr = NULL;
 
 	while ((bytes_read = getline(&line, &size, file)) != -1)
 	{
@@ -125,12 +138,16 @@ int	read_from_file(t_map* map, FILE* file)
 				return (1);
 			print_headers(&(map->header));
 			header_done = 1;
-			map->arr = (int**)malloc(map->header.lines_num * sizeof(int*));
-			if (!map->arr)
+			map->map_arr = (char**)malloc(map->header.lines_num * sizeof(char*));
+			if (!map->map_arr)
+				return (1);
+			map->cache_arr = (int**)malloc(map->header.lines_num * sizeof(int*));
+			if (!map->cache_arr)
 				return (1);
 		}
 	}
-	print_bsq_array(map);
+	print_bsq_map_array(map);
+	print_bsq_cache_array(map);
 	free(line);
 	// bsq("input_file");
 	return (0);
@@ -138,7 +155,7 @@ int	read_from_file(t_map* map, FILE* file)
 
 int	parse_map(t_map* map, const char* file_path, int is_stdin)
 {
-	int	status;
+	int	status = 0;
 
 	if (is_stdin)
 	{
@@ -151,6 +168,8 @@ int	parse_map(t_map* map, const char* file_path, int is_stdin)
 			status = 1;
 		else
 			status = read_from_file(map, file);
+		if (file)
+			fclose(file);
 	}
 	return (status);
 }

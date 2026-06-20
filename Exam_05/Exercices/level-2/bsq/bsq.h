@@ -6,6 +6,8 @@
 #include "stdio.h"
 #include "stdlib.h"
 
+#define TRUE 1
+#define FALSE 0
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 typedef struct	s_header
@@ -21,7 +23,8 @@ typedef struct	s_map
 	t_header	header;
 	int			width;
 	int			height;
-	int			**arr;
+	char		**map_arr;
+	int			**cache_arr;
 }				t_map;
 
 int		bsq(t_map* map);
@@ -32,6 +35,7 @@ void	free_bsq_arr(t_map* map);
 
 // Debug
 void	print_headers(t_header* header);
-void	print_bsq_array(t_map* map);
+void	print_bsq_cache_array(t_map* map);
+void	print_bsq_map_array(t_map* map);
 
 #endif
