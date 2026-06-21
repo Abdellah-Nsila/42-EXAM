@@ -14,6 +14,8 @@ int	main(int ac, char* av[])
 	{
 		return (1);
 	}
-	game_of_life(&map);
+	game_of_life(&map, map.iteration);
+	print_life_arr(&map);
+	free_life_arr(&map);
 	return (0);
 }
