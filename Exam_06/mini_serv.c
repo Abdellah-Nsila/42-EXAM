@@ -153,7 +153,6 @@ int	monitor(int sockfd)
 
 	while (1)
 	{
-		printf("Looop...\n");
 		read_set = write_set = original_set;
 		int events = select(max_fd + 1, &read_set, &write_set, NULL, NULL);
 		if (events == -1)
