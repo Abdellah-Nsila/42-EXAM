@@ -11,7 +11,7 @@ fd_set original_set, read_set, write_set;
 int max_fd = 0;
 int ids[4096];
 int count = 0;
-char* msgs[4096];
+char* msgs[8192];
 
 int extract_message(char **buf, char **msg)
 {
@@ -159,9 +159,9 @@ int	monitor(int sockfd)
 			fatal_error();
 		for (int event = 0; event <= max_fd; event++)
 		{
-			// 1 new client
 			if (!FD_ISSET(event, &read_set))
 				continue;
+			// 1 new client
 			if (event == sockfd)
 			{
 				connect_client(sockfd);
@@ -210,6 +210,6 @@ int main(int ac, char* av[])
 	{
 		fatal_error();
 	}
-
+	// Start Handling incoming client
 	return (monitor(sockfd));
 }
